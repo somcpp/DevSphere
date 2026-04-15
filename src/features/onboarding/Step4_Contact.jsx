@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toggleInterest, updateFormData, setStep, resetOnboarding } from './onboardingSlice';
 import { setUser } from '../auth/authSlice';
-import { updateUserProfile } from '../../Api/authApi';
+import { updateUserProfile } from '../../Api/profileApi';
+
 
 const interests = [
   'Tech & Innovation',

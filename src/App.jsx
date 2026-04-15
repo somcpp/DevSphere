@@ -7,6 +7,9 @@ import Sidebar from './components/Sidebar';
 import AuthPage from './features/auth/AuthPage';
 import ViewProfilePage from './features/viewProfile/ViewProfilePage';
 import ConnectionsPage from './features/connections/ConnectionsPage';
+import MyConnectionsPage from './features/connections/pages/MyConnectionsPage';
+import IncomingRequestPage from './features/connections/pages/IncomingRequestPage';
+import OutgoingRequestPage from './features/connections/pages/OutgoingRequestPage';
 
 // Layout component for main app pages
 const MainLayout = ({ children }) => {
@@ -54,7 +57,34 @@ const App = () => {
         path="/connections"
         element={
           <MainLayout>
-           <ConnectionsPage/>
+            <ConnectionsPage />
+          </MainLayout>
+        }
+      />
+
+      <Route
+        path="/connections/my"
+        element={
+          <MainLayout>
+            <MyConnectionsPage />
+          </MainLayout>
+        }
+      />
+
+      <Route
+        path="/connections/incoming"
+        element={
+          <MainLayout>
+            <IncomingRequestPage />
+          </MainLayout>
+        }
+      />
+
+      <Route
+        path="/connections/outgoing"
+        element={
+          <MainLayout>
+            <OutgoingRequestPage />
           </MainLayout>
         }
       />

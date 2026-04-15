@@ -18,14 +18,7 @@ export const loginUser = async (userData) => {
   }
 };
 
-export const updateUserProfile = async (profileData) => {
-  try {
-    const response = await API.patch('/profile/edit', profileData);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data?.message || 'Profile update failed';
-  }
-};
+
 
 export const logoutUser = async () => {
   try {

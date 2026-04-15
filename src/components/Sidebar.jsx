@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectIncomingRequests } from '../features/connections/connectionsSlice';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+
+  const incomingRequests = useSelector(selectIncomingRequests);
+  const hasPendingRequests = incomingRequests.length > 0;
 
   const menuItems = [
     {
@@ -16,6 +21,7 @@ const Sidebar = () => {
       icon: '🤝',
       label: 'MY CONNECTIONS',
       path: '/connections',
+      showDot: hasPendingRequests,
     },
     {
       icon: '👤',
@@ -35,7 +41,7 @@ const Sidebar = () => {
   ];
 
   const isActive = (path) => {
-    return location.pathname === path;
+    return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
   return (
@@ -66,7 +72,14 @@ const Sidebar = () => {
             }`}
             title={collapsed ? item.label : ''}
           >
-            <span className="text-xl flex-shrink-0">{item.icon}</span>
+            {/* Icon with red dot */}
+            <span className="relative text-xl flex-shrink-0">
+              {item.icon}
+              {item.showDot && (
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
+              )}
+            </span>
+
             {!collapsed && (
               <span className="text-sm font-semibold">{item.label}</span>
             )}

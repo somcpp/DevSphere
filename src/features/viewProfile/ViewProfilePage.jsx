@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { viewProfile } from "../../Api/userApi";
 import { sendConnectionRequest } from "../../Api/connectionsApi";
+import {
+  selectMyConnections,
+  selectIncomingRequests,
+  selectOutgoingRequests,
+} from "../connections/connectionsSlice";
+
 
 const ViewProfilePage = () => {
   const { id } = useParams();
@@ -10,6 +17,19 @@ const ViewProfilePage = () => {
   const [error, setError] = useState(null);
   const [connecting, setConnecting] = useState(false);
   const [connectionSent, setConnectionSent] = useState(false);
+
+  // Check if this user is already in any connections slice —
+  // if so, hide the Connect button
+  const myConnections   = useSelector(selectMyConnections);
+  const incomingReqs    = useSelector(selectIncomingRequests);
+  const outgoingReqs    = useSelector(selectOutgoingRequests);
+
+  const isConnected      = myConnections.some((u) => u._id === id);
+  const isIncoming       = incomingReqs.some((r) => r.fromUserId?._id === id);
+  const isOutgoing       = outgoingReqs.some(
+    (r) => (r.toUserId?._id ?? r.toUserId) === id
+  );
+  const hideConnectBtn   = isConnected || isIncoming || isOutgoing;
 
   const fetchProfile = async () => {
     try {
@@ -109,7 +129,14 @@ const ViewProfilePage = () => {
               </div>
 
               {/* CONNECT BUTTON - RIGHT SIDE */}
-              {connectionSent ? (
+              {hideConnectBtn ? (
+                <div className="text-sm font-semibold px-4 py-2 rounded-lg border mt-4 md:mt-0 whitespace-nowrap
+                  bg-gray-50 border-gray-200 text-gray-500">
+                  {isConnected && "✓ Connected"}
+                  {isIncoming  && "⏳ Request received"}
+                  {isOutgoing  && "⏳ Request sent"}
+                </div>
+              ) : connectionSent ? (
                 <div className="bg-green-100 border border-green-400 text-green-700 p-3 rounded-lg font-semibold text-center whitespace-nowrap mt-4 md:mt-0">
                   ✓ Connection sent!
                 </div>
