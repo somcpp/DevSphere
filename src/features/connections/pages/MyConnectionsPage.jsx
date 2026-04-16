@@ -1,37 +1,14 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import {
   selectMyConnections,
   selectConnectionsLoading,
-  setMyConnections,
-  setLoading,
 } from "../connectionsSlice";
-import { getAllConnections } from "../../../Api/connectionsApi";
 import ItemsList from "../components/ItemsList";
 
 const MyConnectionsPage = () => {
-  const dispatch = useDispatch();
   const connections = useSelector(selectMyConnections);
   const loading = useSelector(selectConnectionsLoading);
-
-  useEffect(() => {
-    if (connections.length > 0) return; // already in store
-    const fetch = async () => {
-      try {
-        dispatch(setLoading(true));
-        const res = await getAllConnections();
-        // API returns array of user objects for connections
-        const data = Array.isArray(res?.data) ? res.data : res;
-        dispatch(setMyConnections(Array.isArray(data) ? data : []));
-      } catch (err) {
-        console.error("Failed to fetch connections:", err);
-        dispatch(setMyConnections([]));
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
-    fetch();
-  }, []);
 
   // Normalise into { user, requestId } shape expected by ItemsList
   const items = connections.map((u) => ({

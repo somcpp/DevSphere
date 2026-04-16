@@ -29,11 +29,6 @@ const Sidebar = () => {
       path: '/profile',
     },
     {
-      icon: '⚙️',
-      label: 'SETTINGS',
-      path: '/settings',
-    },
-    {
       icon: '💬',
       label: 'SUPPORT',
       path: '/support',

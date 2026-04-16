@@ -1,37 +1,14 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import {
   selectIncomingRequests,
   selectConnectionsLoading,
-  setIncomingRequests,
-  setLoading,
 } from "../connectionsSlice";
-import { getIncomingRequests } from "../../../Api/connectionsApi";
 import ItemsList from "../components/ItemsList";
 
 const IncomingRequestPage = () => {
-  const dispatch = useDispatch();
   const incoming = useSelector(selectIncomingRequests);
   const loading = useSelector(selectConnectionsLoading);
-
-  useEffect(() => {
-    if (incoming.length > 0) return; // already in store
-    const fetch = async () => {
-      try {
-        dispatch(setLoading(true));
-        const res = await getIncomingRequests();
-        // API returns array of request objects with { _id, fromUserId, toUserId, status }
-        const data = Array.isArray(res?.data) ? res.data : res;
-        dispatch(setIncomingRequests(Array.isArray(data) ? data : []));
-      } catch (err) {
-        console.error("Failed to fetch incoming requests:", err);
-        dispatch(setIncomingRequests([]));
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
-    fetch();
-  }, []);
 
   // incoming request shape: { _id, fromUserId: { ...userFields }, toUserId, status }
   const items = incoming.map((req) => ({

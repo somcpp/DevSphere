@@ -10,6 +10,7 @@ import ConnectionsPage from './features/connections/ConnectionsPage';
 import MyConnectionsPage from './features/connections/pages/MyConnectionsPage';
 import IncomingRequestPage from './features/connections/pages/IncomingRequestPage';
 import OutgoingRequestPage from './features/connections/pages/OutgoingRequestPage';
+import MyProfilePage from './features/profile/MyProfilePage';
 
 // Layout component for main app pages
 const MainLayout = ({ children }) => {
@@ -93,10 +94,7 @@ const App = () => {
         path="/profile"
         element={
           <MainLayout>
-            <div className="p-8">
-              <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
-              <p className="text-gray-600 mt-2">Profile page coming soon...</p>
-            </div>
+            <MyProfilePage/>
           </MainLayout>
         }
       />

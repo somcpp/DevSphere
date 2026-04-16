@@ -1,37 +1,14 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import {
   selectOutgoingRequests,
   selectConnectionsLoading,
-  setOutgoingRequests,
-  setLoading,
 } from "../connectionsSlice";
-import { getOutgoingRequests } from "../../../Api/connectionsApi";
 import ItemsList from "../components/ItemsList";
 
 const OutgoingRequestPage = () => {
-  const dispatch = useDispatch();
   const outgoing = useSelector(selectOutgoingRequests);
   const loading = useSelector(selectConnectionsLoading);
-
-  useEffect(() => {
-    if (outgoing.length > 0) return; // already in store
-    const fetch = async () => {
-      try {
-        dispatch(setLoading(true));
-        const res = await getOutgoingRequests();
-        // API returns array of request objects with { _id, toUserId: { ...userFields }, fromUserId, status }
-        const data = Array.isArray(res?.data) ? res.data : res;
-        dispatch(setOutgoingRequests(Array.isArray(data) ? data : []));
-      } catch (err) {
-        console.error("Failed to fetch outgoing requests:", err);
-        dispatch(setOutgoingRequests([]));
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
-    fetch();
-  }, []);
 
   // outgoing request shape: { _id, toUserId: { ...userFields }, fromUserId, status }
   const items = outgoing.map((req) => ({
