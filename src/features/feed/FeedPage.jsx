@@ -221,22 +221,7 @@ const FeedPage = () => {
                 </select>
               </div>
 
-              {/* Availability Filter */}
-              <div className="mb-6">
-                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase">
-                  Availability
-                </label>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input type="radio" name="availability" className="mr-2" defaultChecked />
-                    <span className="text-sm text-gray-700">Full-time</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input type="radio" name="availability" className="mr-2" />
-                    <span className="text-sm text-gray-700">Part-time (Project)</span>
-                  </label>
-                </div>
-              </div>
+              
 
               {/* Clear Filters */}
               <button
