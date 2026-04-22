@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectFeed, selectLoading, setUserFeed, setLoading, setError } from './feedSlice';
+import { selectSearch, clearSearch } from '../header/headerSlice';
 import { getUserFeed } from '../../Api/userApi';
 import FeedCard from './FeedCard';
 
@@ -96,6 +97,7 @@ const FeedPage = () => {
   const dispatch = useDispatch();
   const allFeed = useSelector(selectFeed);
   const isLoading = useSelector(selectLoading);
+  const searchQuery = useSelector(selectSearch);
   
   const [feed, setFeed] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -116,6 +118,28 @@ const FeedPage = () => {
       }
     };
 
+  // Handle Search Filter
+  const handleSearch = (usersToFilter) => {
+    if (!searchQuery.trim()) {
+      return usersToFilter;
+    }
+
+    const query = searchQuery.toLowerCase();
+    return usersToFilter.filter((user) => {
+      const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+      const skills = user.skills?.map(s => s.toLowerCase()).join(' ') || '';
+      const experience = user.experience?.map(e => `${e.company} ${e.position}`.toLowerCase()).join(' ') || '';
+      const major = user.major?.toLowerCase() || '';
+
+      return (
+        fullName.includes(query) ||
+        skills.includes(query) ||
+        experience.includes(query) ||
+        major.includes(query)
+      );
+    });
+  };
+
   // Fetch feed data on mount
   useEffect(() => {
     
@@ -127,33 +151,49 @@ const FeedPage = () => {
     }
   }, []);
 
+  // Apply all filters combined
+  const applyAllFilters = (dept, skill, search) => {
+    let filtered = allFeed;
+
+    // Apply search filter
+    filtered = handleSearch(filtered);
+
+    // Apply department filter
+    if (dept !== '') {
+      filtered = filtered.filter((user) => user.major === dept);
+    }
+
+    // Apply skill filter
+    if (skill !== '') {
+      filtered = filtered.filter((user) =>
+        user.skills?.some(s => s.toLowerCase().includes(skill.toLowerCase()))
+      );
+    }
+
+    return filtered;
+  };
+
   // Handle department filter
   const handleFilterDepartment = (e) => {
     const deptName = e.target.value;
     setSelectedDepartment(deptName);
-    
-    if (deptName === '') {
-      setFeed(allFeed);
-    } else {
-      const filtered = allFeed.filter((user) => user.major === deptName);
-      setFeed(filtered);
-    }
+    const filtered = applyAllFilters(deptName, selectedSkill, searchQuery);
+    setFeed(filtered);
   };
 
   // Handle skill filter
   const handleFilterSkill = (e) => {
     const skill = e.target.value;
     setSelectedSkill(skill);
-    
-    if (skill === '') {
-      setFeed(allFeed);
-    } else {
-      const filtered = allFeed.filter((user) => 
-        user.skills?.some(s => s.toLowerCase().includes(skill.toLowerCase()))
-      );
-      setFeed(filtered);
-    }
+    const filtered = applyAllFilters(selectedDepartment, skill, searchQuery);
+    setFeed(filtered);
   };
+
+  // Update feed when search query changes
+  useEffect(() => {
+    const filtered = applyAllFilters(selectedDepartment, selectedSkill, searchQuery);
+    setFeed(filtered);
+  }, [searchQuery]);
 
   // Get unique departments
   const departments = [...new Set(allFeed.map(user => user.major))].filter(Boolean).sort();
@@ -228,6 +268,7 @@ const FeedPage = () => {
                 onClick={() => {
                   setSelectedDepartment('');
                   setSelectedSkill('');
+                  dispatch(clearSearch());
                   setFeed(allFeed);
                 }}
                 className="w-full bg-gray-200 text-gray-800 font-semibold py-2 rounded-lg hover:bg-gray-300 transition-colors"

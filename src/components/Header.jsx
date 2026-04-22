@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { setSearch, selectSearch } from '../features/header/headerSlice';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -10,6 +11,8 @@ const Header = () => {
 
   // Get user info from auth state
   const user = useSelector((state) => state.auth?.user);
+  // Get search query from header state
+  const searchQuery = useSelector(selectSearch);
 
   const handleLogout = () => {
     // Clear auth state and navigate to login
@@ -25,9 +28,9 @@ const Header = () => {
           {/* Logo/Brand */}
           <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate('/feed')}>
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">N</span>
+              <span className="text-white font-bold text-lg">D</span>
             </div>
-            <span className="text-lg font-bold text-gray-900">The Nexus</span>
+            <span className="text-lg font-bold text-gray-900">DevSphere</span>
             <span className="text-xs text-gray-500 ml-2">COLLABORATIVE SPACE</span>
           </div>
 
@@ -37,6 +40,8 @@ const Header = () => {
               <input
                 type="text"
                 placeholder="Search by name, project, or role..."
+                value={searchQuery}
+                onChange={(e) => dispatch(setSearch(e.target.value))}
                 className="w-full px-4 py-2 bg-gray-100 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               />
               <svg
@@ -107,10 +112,7 @@ const Header = () => {
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
 
-            {/* New Request Button */}
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-              + New Request
-            </button>
+            
 
             {/* User Dropdown */}
             <div className="relative ml-4">
