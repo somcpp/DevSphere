@@ -131,8 +131,7 @@ src/
 │   │       └── ViewDetailsPage.jsx
 │   ├── feed/                      # Feed feature
 │   │   ├── FeedPage.jsx
-│   │   ├── FeedCard.jsx
-│   │   └── feedSlice.js
+│   │   └── FeedCard.jsx
 │   ├── header/
 │   │   └── headerSlice.js
 │   ├── onboarding/                # User onboarding flow
