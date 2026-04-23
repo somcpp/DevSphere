@@ -121,7 +121,7 @@ const Header = () => {
                 className="flex items-center space-x-2 p-1 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <img
-                  src={user?.PhotoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=User'}
+                  src={user?.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=User'}
                   alt="User"
                   className="w-8 h-8 rounded-full border-2 border-blue-500"
                 />
@@ -139,12 +139,7 @@ const Header = () => {
                   >
                     View Profile
                   </button>
-                  <button
-                    onClick={() => navigate('/settings')}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Settings
-                  </button>
+                  
                   <hr className="my-1" />
                   <button
                     onClick={handleLogout}
