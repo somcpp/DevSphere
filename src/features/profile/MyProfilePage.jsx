@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../auth/authSlice";
+import { setUser, selectUser } from "../auth/authSlice";
 import { viewloggedInUser, deleteProfile, updateUserProfile } from "../../Api/profileApi";
 import { Edit2, Trash2, MapPin, ExternalLink } from "lucide-react";
 import EditProfileModal from "./EditProfileModal";
@@ -9,10 +9,10 @@ import EditProfileModal from "./EditProfileModal";
 const MyProfilePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const userFromRedux = useSelector((state) => state.auth.user);
+  const userFromRedux = useSelector(selectUser);
 
-  const [user, setUserState] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUserState] = useState(userFromRedux);
+  const [loading, setLoading] = useState(!userFromRedux);
   const [error, setError] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -37,10 +37,20 @@ const MyProfilePage = () => {
   });
 
   const fetchProfile = async () => {
+    // If user data exists in Redux, use it
+    if (userFromRedux) {
+      setUserState(userFromRedux);
+      initializeEditForm(userFromRedux);
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise, fetch from API as fallback
     try {
       setLoading(true);
       const data = await viewloggedInUser();
       setUserState(data);
+      dispatch(setUser(data));
       setError(null);
       initializeEditForm(data);
     } catch (err) {
@@ -73,7 +83,7 @@ const MyProfilePage = () => {
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [userFromRedux]);
 
   const openEditModal = () => {
     initializeEditForm(user);
