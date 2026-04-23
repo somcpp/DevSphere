@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import OnboardingContainer from './features/onboarding/OnBoardingContainer';
 import FeedPage from './features/feed/FeedPage';
 import Header from './components/Header';
@@ -12,6 +13,7 @@ import IncomingRequestPage from './features/connections/pages/IncomingRequestPag
 import OutgoingRequestPage from './features/connections/pages/OutgoingRequestPage';
 import MyProfilePage from './features/profile/MyProfilePage';
 import ProtectedRoute from './features/RoutingProtection/ProtectedRoute';
+import { restoreAuth } from './features/auth/authSlice';
 
 // Layout component for main app pages
 const MainLayout = ({ children }) => {
@@ -29,6 +31,41 @@ const MainLayout = ({ children }) => {
 };
 
 const App = () => {
+  const dispatch = useDispatch();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Restore auth state from localStorage on app load
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    const userStr = localStorage.getItem('user');
+    
+    if (token && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        dispatch(restoreAuth({ token, user }));
+      } catch (error) {
+        console.error('Failed to restore auth:', error);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+      }
+    }
+    
+    // Done checking auth
+    setIsCheckingAuth(false);
+  }, [dispatch]);
+
+  // Show loading screen while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Routes>
       {/* Auth Routes - No Header/Sidebar */}

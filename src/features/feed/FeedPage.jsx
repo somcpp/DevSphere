@@ -14,6 +14,11 @@ const FeedPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedSkill, setSelectedSkill] = useState('');
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [displayedCards, setDisplayedCards] = useState([]);
+  const ITEMS_PER_PAGE = 4;
 
   // Fetch feed data on mount
   useEffect(() => {
@@ -33,37 +38,42 @@ const FeedPage = () => {
     fetchFeed();
   }, []);
 
-  // Filter logic - memoized for performance
+  // Filter logic - Apply all filters to create filteredFeed
   const filteredFeed = useMemo(() => {
     let result = allFeed;
 
-    // Department filter
+    // Apply department filter
     if (selectedDepartment) {
       result = result.filter((user) => user.major === selectedDepartment);
     }
 
-    // Skill filter
+    // Apply skill filter
     if (selectedSkill) {
       result = result.filter((user) =>
         user.skills?.some(s => s.toLowerCase().includes(selectedSkill.toLowerCase()))
       );
     }
 
-    // Search filter
+    // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter((user) => {
         const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-
-        return (
-          fullName.includes(query)
-        );
+        return fullName.includes(query);
       });
     }
 
     return result;
   }, [allFeed, selectedDepartment, selectedSkill, searchQuery]);
 
+  // Pagination logic - Convert filteredFeed to displayedCards for current page
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    
+    const cardsForCurrentPage = filteredFeed.slice(startIndex, endIndex);
+    setDisplayedCards(cardsForCurrentPage);
+  }, [filteredFeed, currentPage]);
 
   // Extract unique departments and skills for filters
   const departments = useMemo(() => 
@@ -76,10 +86,14 @@ const FeedPage = () => {
     [allFeed]
   );
 
+  // Calculate pagination info
+  const totalPages = Math.ceil(filteredFeed.length / ITEMS_PER_PAGE);
+
   // Clear all filters
   const handleClearFilters = () => {
     setSelectedDepartment('');
     setSelectedSkill('');
+    setCurrentPage(1);
     dispatch(clearSearch());
   };
 
@@ -112,7 +126,10 @@ const FeedPage = () => {
                 </label>
                 <select
                   value={selectedDepartment}
-                  onChange={(e) => setSelectedDepartment(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedDepartment(e.target.value);
+                    setCurrentPage(1);
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">All Departments</option>
@@ -131,7 +148,10 @@ const FeedPage = () => {
                 </label>
                 <select
                   value={selectedSkill}
-                  onChange={(e) => setSelectedSkill(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedSkill(e.target.value);
+                    setCurrentPage(1);
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">All Skills</option>
@@ -164,36 +184,53 @@ const FeedPage = () => {
                   <p className="text-gray-600">Loading feed...</p>
                 </div>
               </div>
-            ) : filteredFeed.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredFeed.map((user) => (
-                  <FeedCard
-                    key={user._id}
-                    userId={user._id}
-                    photoURL={user.photoURL}
-                    firstName={user.firstName}
-                    lastName={user.lastName}
-                    major={user.major}
-                    institution={user.institution}
-                    skills={user.skills}
-                    interests={user.interests}
-                    location={user.location}
-                    experience={user.experience}
-                  />
-                ))}
-              </div>
+            ) : displayedCards.length > 0 ? (
+              <>
+                {/* Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {displayedCards.map((user) => (
+                    <FeedCard
+                      key={user._id}
+                      userId={user._id}
+                      photoURL={user.photoURL}
+                      firstName={user.firstName}
+                      lastName={user.lastName}
+                      major={user.major}
+                      institution={user.institution}
+                      skills={user.skills}
+                      interests={user.interests}
+                      location={user.location}
+                      experience={user.experience}
+                    />
+                  ))}
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="flex justify-center items-center gap-4 mt-8">
+                  <button
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Previous
+                  </button>
+
+                  <div className="text-gray-600 font-semibold">
+                    Page <span className="text-blue-600">{currentPage}</span> of <span className="text-blue-600">{totalPages}</span>
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              </>
             ) : (
               <div className="text-center py-12">
                 <p className="text-gray-600 text-lg">No matches found. Try adjusting your filters.</p>
-              </div>
-            )}
-
-            {/* Load More Button */}
-            {filteredFeed.length > 0 && (
-              <div className="text-center mt-8">
-                <button className="bg-gray-100 text-gray-700 font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition-colors">
-                  Load more talented teammates
-                </button>
               </div>
             )}
           </div>

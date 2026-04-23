@@ -29,9 +29,6 @@ const ConnectionsPage = () => {
 
   useEffect(() => {
     // Only fetch if none of the three have been loaded yet
-    const alreadyLoaded =
-      myConnections.length > 0 || incoming.length > 0 || outgoing.length > 0;
-    if (alreadyLoaded) return;
 
     const fetchAll = async () => {
       dispatch(setLoading(true));
@@ -45,8 +42,8 @@ const ConnectionsPage = () => {
         // My Connections
         if (connectionsRes.status === "fulfilled") {
           const data = connectionsRes.value;
-          const arr = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
-          dispatch(setMyConnections(arr));
+
+          dispatch(setMyConnections(data));
         } else {
           console.error("Failed to fetch connections:", connectionsRes.reason);
           dispatch(setMyConnections([]));
@@ -55,8 +52,8 @@ const ConnectionsPage = () => {
         // Incoming Requests
         if (incomingRes.status === "fulfilled") {
           const data = incomingRes.value;
-          const arr = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
-          dispatch(setIncomingRequests(arr));
+
+          dispatch(setIncomingRequests(data));
         } else {
           console.error("Failed to fetch incoming requests:", incomingRes.reason);
           dispatch(setIncomingRequests([]));
@@ -65,8 +62,8 @@ const ConnectionsPage = () => {
         // Outgoing Requests
         if (outgoingRes.status === "fulfilled") {
           const data = outgoingRes.value;
-          const arr = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
-          dispatch(setOutgoingRequests(arr));
+        
+          dispatch(setOutgoingRequests(data));
         } else {
           console.error("Failed to fetch outgoing requests:", outgoingRes.reason);
           dispatch(setOutgoingRequests([]));
