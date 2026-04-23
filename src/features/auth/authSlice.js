@@ -35,4 +35,6 @@ export const {
   setError,
 } = authSlice.actions;
 
+export const selectIsAuthenticated = (state) => (state.auth.isAuthenticated);
+
 export default authSlice.reducer;

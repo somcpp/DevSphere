@@ -11,6 +11,7 @@ import MyConnectionsPage from './features/connections/pages/MyConnectionsPage';
 import IncomingRequestPage from './features/connections/pages/IncomingRequestPage';
 import OutgoingRequestPage from './features/connections/pages/OutgoingRequestPage';
 import MyProfilePage from './features/profile/MyProfilePage';
+import ProtectedRoute from './features/RoutingProtection/ProtectedRoute';
 
 // Layout component for main app pages
 const MainLayout = ({ children }) => {
@@ -39,87 +40,105 @@ const App = () => {
       <Route
         path="/feed"
         element={
-          <MainLayout>
-            <FeedPage />
-          </MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
+              <FeedPage />
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path='/view/:id'
         element={
-          <MainLayout>
-            <ViewProfilePage/>
-          </MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
+              <ViewProfilePage/>
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/connections"
         element={
-          <MainLayout>
-            <ConnectionsPage />
-          </MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
+              <ConnectionsPage />
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/connections/my"
         element={
-          <MainLayout>
-            <MyConnectionsPage />
-          </MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
+              <MyConnectionsPage />
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/connections/incoming"
         element={
-          <MainLayout>
-            <IncomingRequestPage />
-          </MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
+              <IncomingRequestPage />
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/connections/outgoing"
         element={
-          <MainLayout>
-            <OutgoingRequestPage />
-          </MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
+              <OutgoingRequestPage />
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/profile"
         element={
-          <MainLayout>
-            <MyProfilePage/>
-          </MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
+              <MyProfilePage/>
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/settings"
         element={
-          <MainLayout>
-            <div className="p-8">
-              <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-              <p className="text-gray-600 mt-2">Settings page coming soon...</p>
-            </div>
-          </MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
+              <div className="p-8">
+                <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+                <p className="text-gray-600 mt-2">Settings page coming soon...</p>
+              </div>
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
 
       <Route
         path="/support"
         element={
-          <MainLayout>
-            <div className="p-8">
-              <h1 className="text-3xl font-bold text-gray-900">Support</h1>
-              <p className="text-gray-600 mt-2">Support page coming soon...</p>
-            </div>
-          </MainLayout>
+          <ProtectedRoute>
+            <MainLayout>
+              <div className="p-8">
+                <h1 className="text-3xl font-bold text-gray-900">Support</h1>
+                <p className="text-gray-600 mt-2">Support page coming soon...</p>
+              </div>
+            </MainLayout>
+          </ProtectedRoute>
         }
       />
     </Routes>
